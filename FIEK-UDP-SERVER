@@ -118,7 +118,7 @@ while True:
                         ciphertexti = ''
                         i=0
                         for c in plaintext:
-                        if c in alfabeti:
+                            if c in alfabeti:
                                 ciphertexti += alfabeti[(alfabeti.index(c)+qelesi[i])%(len(alfabeti))]
                                 i+=1
                                 if i>2:
