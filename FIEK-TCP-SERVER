@@ -278,7 +278,27 @@ class ClientThread(Thread):
                       
                else :
                     connectionSocket.send(("Ju lutem shkruani nje link !").encode("utf-8"))          
-                     
+            elif message.startswith("KOMBINIMET ") or message.startswith("kombinimet "):
+                  l = str(message[11:])
+                  if (l!=""):
+                      comb = []
+                      for i in range(len(l)):
+                        comb += itertools.combinations(l,i+1)
+                      connectionSocket.send((("Kombinimet  e mundshme janë: " )+str(comb)).encode("utf-8"))
+                  else:
+                     connectionSocket.send(("Ju lutem plotesoni fushen e kerkuar!" ).encode("utf-8"))
+            elif message.startswith("VITI ") or message.startswith("viti "):
+                try: 
+                    vitiilindjes=int(message[5:])
+            
+                    viti = int(datetime.datetime.now().strftime("%Y"))
+                    mosha = viti-vitiilindjes   
+                    if mosha<1 :  
+                       connectionSocket.send(("Mosha nuk mund te shfaqet!" ).encode("utf-8"))
+                    else  :
+                       connectionSocket.send(("Mosha e personit është: " + str(mosha)).encode("utf-8"))
+                except:
+                     connectionSocket.send(("Ju lutem shkruani vitin e lindjes!" ).encode("utf-8"))            
             else:
                    connectionSocket.send("ERROR".encode("utf-8"))
                   
