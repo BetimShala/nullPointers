@@ -157,7 +157,72 @@ class ClientThread(Thread):
                      else:
                          connectionSocket.send(str("Karakter!").encode("utf-8"))
                 else:
-                        connectionSocket.send(str("Gabim ne shtypje , shtyp vetem nje tast!").encode("utf-8"))    
+                        connectionSocket.send(str("Gabim ne shtypje , shtyp vetem nje tast!").encode("utf-8"))
+            elif message.startswith("enkripto ") or message.startswith("ENKRIPTO "):
+                    plaintext= str(message)[9:]
+                    if plaintext!="":
+                         alfabeti = list('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')
+                         qelesi = random.sample(range(1, 10), 3)
+                         ciphertexti = ''
+                         i=0
+                         for c in plaintext:
+                              if c in alfabeti:
+                                    ciphertexti += alfabeti[(alfabeti.index(c)+qelesi[i])%(len(alfabeti))]
+                                    i+=1
+                                    if i>2:
+                                        i=0
+                         connectionSocket.send(str("MESAZHI I ENKRIPTUAR : "+ciphertexti).encode("utf-8"))
+                    else:
+                       connectionSocket.send(str("PlainTeksti nuk duhet te jete i zbrazet").encode("utf-8"))
+            
+            elif message.startswith("PRIME-SUM ") or  message.startswith("prime-sum "):
+                    numrat=message[10:]
+                    if(numrat!=""):
+                        try:
+                             numrat1=numrat.split(" ")
+                             kufiri=int(numrat1[0])
+                             ranngu=int(numrat1[1])
+                        
+            
+                             numbers=list(random.sample(range(1,kufiri),ranngu))        
+                             i=2
+                             sum=0
+                             for c in numbers:
+                                 if(c==1 or c==2 or c==3):
+                                     check=1
+                                     sum=sum+c
+                                     i=2
+                                 else:
+                                     while i <= c/2:
+                                      if c%i==0:
+                                          check=0
+                                          i=2
+                                          break
+                                      else:
+                                          i+=1
+                                          if c%i==0:
+                                            check=0
+                                            i=2
+                                            break
+                                          else:
+                                              check=1
+                                              sum=sum+c
+                                              i=2
+                                              break
+                                 
+                             if(sum!=0):
+                                  msg="Shuma e numrave primar random eshte: " +str(sum)
+                                  connectionSocket.send(msg.encode("utf-8")) 
+                             else:
+                                 sum=0
+                                 msg="Shuma e numrave primar random eshte: " +str(sum)
+                                 connectionSocket.send(msg.encode("utf-8"))
+
+                        except:
+                               connectionSocket.send("Kufiri dhe rangu duhet te jene numra".encode("utf-8"))  
+                    else:
+                         exceptionMessage="Ju lutem deklaroni kufirin dhe rangun"
+                         connectionSocket.send(exceptionMessage.encode("utf-8"))              
             else:
                    connectionSocket.send("ERROR".encode("utf-8"))
                   
