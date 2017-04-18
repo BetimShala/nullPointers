@@ -169,6 +169,48 @@ while True:
                  else:
                       exceptionMessage="Ju lutem deklaroni kufirin dhe rangun"
                       serverSocket.sendto(exceptionMessage.encode("utf-8"),clientAddress) 
-                 
+        elif message.startswith("PIRAMIDA") or message.startswith("piramida"):
+            numri = str(message).split(" ")
+            try:
+                numriRr = int(numri[1])
+                if numriRr < 20:
+                    k=int(0)
+                    i=int(numriRr)
+                    kastro = str("")
+                    while i>0 :
+                        j=int(1)
+                        while j<i:
+                            kastro = kastro+"   "
+                            j=j+1
+                        l=-k
+                        while l<=k:
+                            ndermjetesimi = str(abs(l)+1)
+                            if (abs(l)+1) < 10:
+                                kastro = kastro + ndermjetesimi+"  "
+                            else:
+                                kastro = kastro + ndermjetesimi+" "
+                            l=l+1
+                        serverSocket.sendto(kastro.encode("utf-8"),clientAddress)
+                        kastro = ""
+                        k=k+1
+                        i=i-1
+                    serverSocket.sendto("Perfundo".encode("utf-8"),clientAddress)
+                else:
+                    serverSocket.sendto("Permbajuni definimit te mesiperm!".encode("utf-8"),clientAddress)
+            except Exception:  
+                serverSocket.sendto("Permbajuni definimit te mesiperm!".encode("utf-8"),clientAddress)
+        elif message.startswith("SHKRONJENUMERAPOKARAKTER") or message.startswith("shkronjenumerapokarakter"):
+            shtypja = str(message).split(" ")
+            if len(shtypja[1])==1:
+                 if ord(shtypja[1])>=ord("A") and ord(shtypja[1])<=ord("Z"):
+                     serverSocket.sendto(str("Shkronje e madhe!").encode("utf-8"),clientAddress)
+                 elif ord(shtypja[1])>=ord("a") and ord(shtypja[1])<=ord("z"):
+                     serverSocket.sendto(str("Shkronje e vogel!").encode("utf-8"),clientAddress)
+                 elif ord(shtypja[1])>=ord("0") and ord(shtypja[1])<=ord("9"):
+                     serverSocket.sendto(str("Numer!").encode("utf-8"),clientAddress)
+                 else:
+                     serverSocket.sendto(str("Karakter!").encode("utf-8"),clientAddress)
+            else:
+                    serverSocket.sendto(str("Gabim ne shtypje , shtyp vetem nje tast!").encode("utf-8"),clientAddress)             
         else:
             serverSocket.sendto("ERROR".encode("utf-8"),clientAddress) 
