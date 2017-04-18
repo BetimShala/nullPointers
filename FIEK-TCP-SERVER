@@ -30,7 +30,7 @@ class ThreadedServer(object):
             threading.Thread(target = self.listenToClient,args = (client,address)).start() 
          
  
-    def run(self): 
+    def listenToClient(self, client, address): 
         while True : 
             message=client.recv(1024)
             message = message.decode("utf-8");         
