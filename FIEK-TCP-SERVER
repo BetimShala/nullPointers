@@ -222,7 +222,63 @@ class ClientThread(Thread):
                                connectionSocket.send("Kufiri dhe rangu duhet te jene numra".encode("utf-8"))  
                     else:
                          exceptionMessage="Ju lutem deklaroni kufirin dhe rangun"
-                         connectionSocket.send(exceptionMessage.encode("utf-8"))              
+                         connectionSocket.send(exceptionMessage.encode("utf-8"))
+            elif message.startswith("FIBONNACI ") or message.startswith("fibonnaci "):
+                 mesazhi = message[10:]
+                 try:
+                      numri = int(mesazhi)
+                      
+                      if (numri > 0):
+                         def fibonnaci(n):
+                               if (n==1 or n==2):
+                                   return 1
+                               else:
+                                   return fibonnaci(n-1) + fibonnaci(n-2)
+                      
+                         mesazhiModifikuar = []
+                         for i in range(1,numri+1):
+                             mesazhiModifikuar.append(fibonnaci(i))
+                      
+                         connectionSocket.send(str(mesazhiModifikuar).encode("utf-8"))
+                        
+                      
+                      else:
+                         connectionSocket.send("Nuk mund te kthehet seria me numer negativ te anetareve !".encode("utf-8"))
+                        
+                 except:
+                     connectionSocket.send("Ju lutem shkruani nje numer !".encode("utf-8"))
+                     
+            elif message.startswith("ROOT ") or message.startswith("root "):
+               mesazhi = str(message)[5:]
+               if(mesazhi!=""):
+                   ip = socket.gethostbyname( mesazhi )
+                   try:
+                      host = socket.gethostbyaddr( ip )
+                      hostname = str(host).split("'")
+                      if(mesazhi == hostname[1]):
+                          connectionSocket.send(("Pergjigjet qe kthehen nga " +str(mesazhi) + " jane autoritative ! \n" +
+                                               "Emri : " + str(mesazhi) + "\n" +
+                                               "Adresa : " + str(ip) + "\n" + 
+                                               "Emri i hostit : " + str(hostname[1]) + "\n" +
+                                               "Hosti : " + str(host)).encode("utf-8"))
+                          
+                      else:
+                          connectionSocket.send(("Pergjigjet qe kthehen nga " + str(mesazhi) + " nuk jane autoritative ! \n" +
+                                               "Emri : " + str(mesazhi) + "\n" +
+                                               "Adresa : " + str(ip) + "\n" + 
+                                               "Emri i hostit : " + str(hostname[1]) + "\n" +
+                                               "Hosti : " + str(host)).encode("utf-8"))
+                        
+                   
+                   except:
+                       connectionSocket.send(("Pergjigjet qe kthehen nga " + str(mesazhi) + " nuk jane autoritative ! \n" +
+                                               "Emri : " + str(mesazhi) + "\n" +
+                                               "Adresa : " + str(ip) + "\n" + 
+                                               "Emri i hostit : Nuk mund te kthehet !").encode("utf-8"))
+                      
+               else :
+                    connectionSocket.send(("Ju lutem shkruani nje link !").encode("utf-8"))          
+                     
             else:
                    connectionSocket.send("ERROR".encode("utf-8"))
                   
