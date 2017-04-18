@@ -1,0 +1,141 @@
+import socket 
+from threading import Thread 
+from socketserver import *
+import datetime
+import random
+import string
+import sys
+import socket
+import math
+import numbers
+import decimal
+import itertools
+import sys
+
+ 
+
+class ClientThread(Thread): 
+ 
+    def __init__(self,ip,port): 
+        Thread.__init__(self) 
+        self.ip = ip 
+        self.port = port 
+         
+ 
+    def run(self): 
+        while True : 
+            message=connectionSocket.recv(1024)
+            message = message.decode("utf-8");         
+            if message == "ip" or message== "IP":
+                 mesazhimodifikuar = connectionSocket.getpeername()[0]
+                 connectionSocket.send(mesazhimodifikuar.encode("utf-8"))
+            elif message == "port" or message == "PORT":
+                 mesazhimodifikuar = str(connectionSocket.getpeername()[1])
+                 connectionSocket.send(mesazhimodifikuar.encode("utf-8"))
+            elif message.startswith("PRINTO ") or message.startswith("printo "):
+                mesazhi=message[7:]
+                if(mesazhi!=""):
+                   mesazhi = str(mesazhi)
+                   connectionSocket.send(mesazhi.encode("utf-8"))
+                else:
+                    connectionSocket.send("Nuk keni shtypur fjalen!".encode("utf-8"))
+            elif message.startswith("ZANORE ") or message.startswith("zanore "):
+                mesazhi = message[7:]
+                if(mesazhi!=""):
+                   zanore=list(str(mesazhi))
+                   count=0;
+                   for i in zanore:
+                       if i in ["a","e","o","u","i","y","A","E","O","I","Y","U"]:
+                           count+=1                      
+                   connectionSocket.send(("Numri i zanoreve eshte " + str(count)).encode("utf-8"))
+                else:
+                   connectionSocket.send("Nuk keni shtypur tekst!".encode("utf-8"))
+            elif message=="time" or message=="TIME":
+                mesazhi=str(datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S %p"))
+                connectionSocket.send(mesazhi.encode("utf-8")) 
+            elif message=="keno" or message=="KENO":
+                connectionSocket.send(str(random.sample(range(1, 81), 20)).encode("utf-8")  ) 
+            elif message.startswith("FAKTORIEL ") or message.startswith("faktoriel "):
+               mesazhi=message[10:]
+               try:
+                   numri = int(mesazhi)
+                   faktorieli = 1
+                   if numri < 0:
+                      mesazhiModifikuar = "Faktorieli i numrave negativ nuk ekziston."
+                   elif numri == 0:
+                      mesazhiModifikuar = "Faktorieli i 0 eshte 1."
+                   else:
+                      for i in range(1,numri + 1):
+                         faktorieli = faktorieli*i
+                      mesazhiModifikuar = "Faktorieli i " + str(numri) + " eshte " + str(faktorieli)
+                      #mesazhiModifikuar = str(faktorieli)
+                   connectionSocket.send(mesazhiModifikuar.encode("utf-8"))  
+               except:
+                   connectionSocket.send("Ju lutem shkruani nje numer!".encode("utf-8"))  
+            elif message == "host" or message == "HOST":
+                try:
+                    mesazhi = socket.gethostbyaddr("localhost")
+                    connectionSocket.send(str(mesazhi).encode("utf-8"))
+                except Exception:
+                    connectionSocket.send("Nuk lejohet kjo informate!")
+            elif message.startswith("KONVERTO ") or message.startswith("konverto "):
+                mesazhi = str(message).split(" ")
+                if(mesazhi[1]!=""):
+                    try:
+                        if(mesazhi[2]!=""):
+                            if mesazhi[1].lower() == "celsiustokelvin":
+                                temp = round(float(mesazhi[2])+273.15,2)
+                                connectionSocket.send(str(temp).encode("utf-8"))
+                            elif mesazhi[1].lower() == "celsiustofahrenheit":
+                                temp = round(float(mesazhi[2])*(9/5)+32,2)
+                                connectionSocket.send(str(temp).encode("utf-8"))
+                            elif mesazhi[1].lower() == "kelvintofahrenheit":
+                                temp = round(((float(mesazhi[2])-273.15)*(9/5)+32),2)
+                                connectionSocket.send(str(temp).encode("utf-8"))
+                            elif mesazhi[1].lower() == "kelvintocelsius":
+                                temp = round(float(mesazhi[2])-273.15,2);
+                                connectionSocket.send(str(temp).encode("utf-8"))
+                            elif mesazhi[1].lower() == "fahrenheittocelsius":
+                                temp = round((5/9)*(float(mesazhi[2])-32),2);
+                                connectionSocket.send(str(temp).encode("utf-8"))
+                            elif mesazhi[1].lower() == "fahrenheittokelvin":
+                                temp = round((5/9)*(float(mesazhi[2])-32)+273.15,2);
+                                connectionSocket.send(str(temp).encode("utf-8"))        
+                            elif mesazhi[1].lower() == "poundtokilogram":
+                                kilogram = round(float(mesazhi[2])/2.2,2)
+                                connectionSocket.send(str(kilogram).encode("utf-8"))
+                            elif mesazhi[1].lower() == "kilogramtopound":
+                                pound = round(float(mesazhi[2])*2.2,2)
+                                connectionSocket.send(str(pound).encode("utf-8"))
+                            else:
+                                connectionSocket.send("Shtypni njerin nga opsionet!".encode("utf-8"))
+                        else:
+                              connectionSocket.send("Shtypni numrin!".encode("utf-8"))
+                    except Exception:
+                         connectionSocket.send("Shtypni numrin!".encode("utf-8"))
+                elif((mesazhi[1]=="")):
+                   connectionSocket.send("Shkruani njerin nga opsionet ne konvertim dhe numrin!".encode("utf-8"))
+            else:
+                   connectionSocket.send("ERROR".encode("utf-8"))
+                  
+ 
+ 
+serverPort = 9000
+  
+ 
+serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+serverSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) 
+serverSocket.bind(('', serverPort)) 
+threads = [] 
+
+print ("Serveri i gatshem per pranim!") 
+
+while True: 
+    serverSocket.listen(5) 
+    (connectionSocket, (ip,port)) = serverSocket.accept() 
+    newthread = ClientThread(ip,port) 
+    newthread.start() 
+    threads.append(newthread) 
+ 
+for t in threads: 
+    t.join() 
