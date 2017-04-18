@@ -115,7 +115,7 @@ class ClientThread(Thread):
                          connectionSocket.send("Shtypni numrin!".encode("utf-8"))
                 elif((mesazhi[1]=="")):
                    connectionSocket.send("Shkruani njerin nga opsionet ne konvertim dhe numrin!".encode("utf-8"))
-                        elif message.startswith("PIRAMIDA") or message.startswith("piramida"):
+            elif message.startswith("PIRAMIDA") or message.startswith("piramida"):
                numri = str(message).split(" ")
                try:
                    numriRr = int(numri[1])
