@@ -115,6 +115,49 @@ class ClientThread(Thread):
                          connectionSocket.send("Shtypni numrin!".encode("utf-8"))
                 elif((mesazhi[1]=="")):
                    connectionSocket.send("Shkruani njerin nga opsionet ne konvertim dhe numrin!".encode("utf-8"))
+                        elif message.startswith("PIRAMIDA") or message.startswith("piramida"):
+               numri = str(message).split(" ")
+               try:
+                   numriRr = int(numri[1])
+                   if numriRr < 20:
+                       k=int(0)
+                       i=int(numriRr)
+                       kastro = str("")
+                       while i>0 :
+                           j=int(1)
+                           while j<i:
+                               kastro = kastro+"   "
+                               j=j+1
+                           l=-k
+                           while l<=k:
+                               ndermjetesimi = str(abs(l)+1)
+                               if (abs(l)+1) < 10:
+                                   kastro = kastro + ndermjetesimi+"  "
+                               else:
+                                   kastro = kastro + ndermjetesimi+" "
+                               l=l+1
+                           connectionSocket.send(kastro.encode("utf-8"))
+                           kastro = ""
+                           k=k+1
+                           i=i-1
+                       connectionSocket.send("Perfundo".encode("utf-8"))
+                   else:
+                       connectionSocket.send("Permbajuni definimit te mesiperm!".encode("utf-8"))
+               except Exception:  
+                   connectionSocket.send("Permbajuni definimit te mesiperm!".encode("utf-8")) 
+            elif message.startswith("SHKRONJENUMERAPOKARAKTER") or message.startswith("shkronjenumerapokarakter"):
+                shtypja = str(message).split(" ")
+                if len(shtypja[1])==1:
+                     if ord(shtypja[1])>=ord("A") and ord(shtypja[1])<=ord("Z"):
+                         connectionSocket.send(str("Shkronje e madhe!").encode("utf-8"))
+                     elif ord(shtypja[1])>=ord("a") and ord(shtypja[1])<=ord("z"):
+                         connectionSocket.send(str("Shkronje e vogel!").encode("utf-8"))
+                     elif ord(shtypja[1])>=ord("0") and ord(shtypja[1])<=ord("9"):
+                         connectionSocket.send(str("Numer!").encode("utf-8"))
+                     else:
+                         connectionSocket.send(str("Karakter!").encode("utf-8"))
+                else:
+                        connectionSocket.send(str("Gabim ne shtypje , shtyp vetem nje tast!").encode("utf-8"))    
             else:
                    connectionSocket.send("ERROR".encode("utf-8"))
                   
