@@ -1,0 +1,114 @@
+import socket
+import math
+import datetime
+import string
+import random
+import numbers
+import decimal
+import itertools
+import sys
+
+serverPort=9000
+
+serverSocket=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+serverSocket.bind(('',serverPort))
+
+print ("Serveri eshte i gatshem per pranim te kerkesave ...")
+
+
+while True:
+        message,clientAddress=serverSocket.recvfrom(1024)
+        message = message.decode("utf-8");
+        ## Ketu shkruhen kushtet per mesazhin e pranuar 
+        if message == "ip" or message == "IP":
+            mesazhi = str(clientAddress).split("'")
+            serverSocket.sendto(mesazhi[1].encode("utf-8"),clientAddress)
+        elif message == "port" or message == "PORT":
+             mesazhi = str(clientAddress).split(", ")
+             mesazhi[1] = mesazhi[1][:len(mesazhi[1])-1]
+             serverSocket.sendto(mesazhi[1].encode("utf-8"),clientAddress) 
+        elif message.startswith("PRINTO ") or message.startswith("printo "):
+            mesazhi=message[7:]
+            if(mesazhi!=""):
+               mesazhi = str(mesazhi)
+               serverSocket.sendto(mesazhi.encode("utf-8"),clientAddress)
+            else:
+                serverSocket.sendto("Nuk keni shtypur fjalen!".encode("utf-8"),clientAddress)
+        elif message.startswith("ZANORE ") or message.startswith("zanore "):
+            mesazhi = message[7:]
+            if(mesazhi!=""):
+               zanore=list(str(mesazhi))
+               count=0;
+               for i in zanore:
+                   if i in ["a","e","o","u","i","y","A","E","O","I","Y","U"]:
+                       count+=1                      
+               serverSocket.sendto(("Numri i zanoreve eshte " + str(count)).encode("utf-8"),clientAddress)
+            else:
+               serverSocket.sendto("Nuk keni shtypur tekst!".encode("utf-8"),clientAddress)
+        elif message=="time" or message=="TIME":
+              mesazhi=str(datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S %p"))
+              serverSocket.sendto(mesazhi.encode("utf-8"),clientAddress) 
+        elif message=="keno" or message=="KENO":
+               serverSocket.sendto(str(random.sample(range(1, 81), 20)).encode("utf-8"),clientAddress) 
+        elif message.startswith("FAKTORIEL ") or message.startswith("faktoriel "):
+               mesazhi=message[10:]
+               try:
+                   numri = int(mesazhi)
+                   faktorieli = 1
+                   if numri < 0:
+                      mesazhiModifikuar = "Faktorieli i numrave negativ nuk ekziston."
+                   elif numri == 0:
+                      mesazhiModifikuar = "Faktorieli i 0 eshte 1."
+                   else:
+                      for i in range(1,numri + 1):
+                         faktorieli = faktorieli*i
+                      mesazhiModifikuar = "Faktorieli i " + str(numri) + " eshte " + str(faktorieli)
+                      #mesazhiModifikuar = str(faktorieli)
+                   serverSocket.sendto(mesazhiModifikuar.encode("utf-8"),clientAddress)  
+               except:
+                   serverSocket.sendto("Ju lutem shkruani nje numer!".encode("utf-8"),clientAddress)
+        elif message == "host" or message == "HOST":
+             try:
+                 mesazhi = socket.gethostbyaddr("localhost")
+                 serverSocket.sendto(str(mesazhi).encode("utf-8"),clientAddress)
+             except Exception:
+                 serverSocket.sendto("Nuk lejohet kjo informate!",clientAddress)
+        elif message.startswith("KONVERTO ") or message.startswith("konverto "):
+            mesazhi = str(message).split(" ");
+            if(mesazhi[1]!=""):
+                try:
+                    if(mesazhi[2]!=""):
+                        if mesazhi[1].lower() == "celsiustokelvin":
+                            temp = round(float(mesazhi[2])+273.15,2)
+                            serverSocket.sendto(str(temp).encode("utf-8"),clientAddress)
+                        elif mesazhi[1].lower() == "celsiustofahrenheit":
+                            temp = round(float(mesazhi[2])*(9/5)+32,2)
+                            serverSocket.sendto(str(temp).encode("utf-8"),clientAddress)
+                        elif mesazhi[1].lower() == "kelvintofahrenheit":
+                            temp = round(((float(mesazhi[2])-273.15)*(9/5)+32),2)
+                            serverSocket.sendto(str(temp).encode("utf-8"),clientAddress)
+                        elif mesazhi[1].lower() == "kelvintocelsius":
+                            temp = round(float(mesazhi[2])-273.15,2);
+                            serverSocket.sendto(str(temp).encode("utf-8"),clientAddress)
+                        elif mesazhi[1].lower() == "fahrenheittocelsius":
+                            temp = round((5/9)*(float(mesazhi[2])-32),2);
+                            serverSocket.sendto(str(temp).encode("utf-8"),clientAddress)
+                        elif mesazhi[1].lower() == "fahrenheittokelvin":
+                            temp = round((5/9)*(float(mesazhi[2])-32)+273.15,2);
+                            serverSocket.sendto(str(temp).encode("utf-8"),clientAddress)        
+                        elif mesazhi[1].lower() == "poundtokilogram":
+                            kilogram = round(float(mesazhi[2])/2.2,2)
+                            serverSocket.sendto(str(kilogram).encode("utf-8"),clientAddress)
+                        elif mesazhi[1].lower() == "kilogramtopound":
+                            pound = round(float(mesazhi[2])*2.2,2)
+                            serverSocket.sendto(str(pound).encode("utf-8"),clientAddress)
+                        else:
+                            serverSocket.sendto("Shtypni njerin nga opsionet!".encode("utf-8"),clientAddress)
+                    else:
+                          serverSocket.sendto("Shtypni numrin!".encode("utf-8"),clientAddress)
+                except Exception:
+                    serverSocket.sendto("Shtypni numrin!".encode("utf-8"),clientAddress)
+            else:
+                serverSocket.sendto("Shkruani njerin nga opsionet ne konvertim dhe numrin!".encode("utf-8"),clientAddress)
+    else:
+            serverSocket.sendto("ERROR".encode("utf-8"),clientAddress) 
