@@ -282,6 +282,42 @@ while True:
                 else  :
                    serverSocket.sendto(("Mosha e personit është: " + str(mosha)).encode("utf-8"),clientAddress)
               except:
-                   serverSocket.sendto(("Ju lutem shkruani vitin e lindjes!" ).encode("utf-8"),clientAddress)          
+                   serverSocket.sendto(("Ju lutem shkruani vitin e lindjes!" ).encode("utf-8"),clientAddress) 
+        elif message.startswith("SHENDRRO") or message.startswith("shendrro"):
+              message = message.split(" ")
+              if message[1]!="":
+                    if message[2]!="":
+                        if message[1].lower() == "dectobin":
+                            numri = bin(int(message[2]))[2:]
+                            serverSocket.sendto(("Numri binar eshte : " + str(numri)).encode("utf-8"),clientAddress)
+                        elif message[1].lower() == "dectooct":
+                            numri = oct(int(message[2]))[2:]
+                            serverSocket.sendto(("Numri oktal eshte : " + str(numri)).encode("utf-8"),clientAddress)
+                        elif message[1].lower() == "dectohex":
+                            numri = hex(int(message[2]))[2:]
+                            serverSocket.sendto(("Numri heksadecimal eshte : " + str(numri)).encode("utf-8"),clientAddress)
+                        elif message[1].lower() == "hextodec":
+                            numri = int(message[2], 16)
+                            serverSocket.sendto(("Numri decimal eshte : " + str(numri)).encode("utf-8"),clientAddress)
+                        elif message[1].lower() == "octtodec":
+                            numri = int(message[2], 8)
+                            serverSocket.sendto(("Numri decimal eshte : " + str(numri)).encode("utf-8"),clientAddress)
+                        elif message[1].lower() == "bintodec":
+                            numri = int(message[2], 2)
+                            serverSocket.sendto(("Numri decimal eshte : " + str(numri)).encode("utf-8"),clientAddress)
+                    else:
+                         serverSocket.sendto(("Ju lutem shkruani numrin e deshiruar").encode("utf-8"),clientAddress)
+              else:
+                   serverSocket.sendto(("Ju lutem shkuani opcionin dhe numrin e deshiruar").encode("utf-8"),clientAddress)
+        elif message.startswith("LEAPYEAR") or message.startswith("leapyear"):
+              mesazhi = str(message)[8:]
+              if mesazhi!="":
+                viti = int(mesazhi)
+                if (viti % 4 == 0 and viti % 100 != 0) or (viti % 400 == 0):
+                    serverSocket.sendto((str(viti)+ " eshte vit i brishte").encode("utf-8"),clientAddress)
+                else:
+                    serverSocket.sendto((str(viti)+ " nuk eshte vit i brishte").encode("utf-8"),clientAddress)
+              else:
+                  serverSocket.sendto(("Ju lutem shkruani vitin e deshiruar").encode("utf-8"),clientAddress)                    
         else:
             serverSocket.sendto("ERROR".encode("utf-8"),clientAddress) 
